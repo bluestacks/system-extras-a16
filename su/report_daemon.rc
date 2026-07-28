@@ -1,0 +1,4 @@
+service report_daemon /system/bin/report_daemon
+    class main
+    user root
+    group root

@@ -27,3 +27,19 @@ cc_binary {
 
     header_libs: ["libcutils_headers"],
 }
+
+// A16DBG:P2:MECH BST su report daemon (a13; cloud telemetry)
+cc_binary {
+    name: "report_daemon",
+    srcs: ["report_daemon.c", "su_utils.c"],
+    cflags: ["-Wno-unused-parameter"],
+    shared_libs: [
+        "libcutils",
+        "liblog",
+        "libz",
+        "libssl",
+        "libcrypto",
+    ],
+    static_libs: ["libcurl"],
+    init_rc: ["report_daemon.rc"],
+}
