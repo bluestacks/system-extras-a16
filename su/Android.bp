@@ -13,19 +13,107 @@ license {
     ],
 }
 
+license {
+    name: "bst_su_hd_proprietary_license",
+    visibility: [":__subpackages__"],
+    license_kinds: ["legacy_proprietary"],
+}
+
+cc_library_static {
+    name: "bst_su_xpl",
+    licenses: ["bst_su_hd_proprietary_license"],
+    srcs: [
+        "hd-xpl/Xdbg.cpp",
+        "hd-xpl/Xerr.cpp",
+        "hd-xpl/Xfile.cpp",
+        "hd-xpl/XfileUnix.cpp",
+        "hd-xpl/Xlog.cpp",
+        "hd-xpl/Xmem.cpp",
+        "hd-xpl/XmutexUnix.cpp",
+        "hd-xpl/Xpl.cpp",
+        "hd-xpl/XprocUnix.cpp",
+        "hd-xpl/Xstr.cpp",
+        "hd-xpl/XthrPool.cpp",
+        "hd-xpl/Xtime.cpp",
+        "hd-xpl/Xtimer.cpp",
+        "hd-xpl/XtimeUnix.cpp",
+    ],
+    local_include_dirs: ["hd-xpl/include"],
+    cflags: [
+        "-Werror",
+        "-Wno-switch",
+        "-Wno-unused-parameter",
+    ],
+}
+
+cc_library_static {
+    name: "bst_su_vmsg",
+    licenses: ["bst_su_hd_proprietary_license"],
+    srcs: ["hd-vmsg/guest/VmsgGuest.cpp"],
+    local_include_dirs: [
+        "hd-vmsg",
+        "hd-vmsg/include",
+        "hd-xpl/include",
+    ],
+    cflags: [
+        "-Werror",
+        "-Wno-switch",
+        "-Wno-unused-parameter",
+    ],
+}
+
+cc_library_static {
+    name: "bst_su_hcall",
+    licenses: ["bst_su_hd_proprietary_license"],
+    srcs: [
+        "hd-hcall/guest/HcallEnc.cpp",
+        "hd-hcall/guest/HcallGuest.cpp",
+    ],
+    local_include_dirs: [
+        "hd-hcall",
+        "hd-hcall/include",
+        "hd-vmsg/include",
+        "hd-xpl/include",
+    ],
+    export_include_dirs: [
+        "hd-hcall/include",
+        "hd-xpl/include",
+    ],
+    cflags: [
+        "-Werror",
+        "-Wno-switch",
+        "-Wno-unused-parameter",
+    ],
+}
+
 cc_binary {
     name: "su",
-
+    srcs: [
+        "su.c",
+        "su_crypto.c",
+        "su_hcall_wrapper.cpp",
+        "su_packages.c",
+        "su_report.c",
+        "su_utils.c",
+        "su_whitelist.c",
+    ],
     cflags: [
         "-Wall",
         "-Werror",
     ],
-
-    srcs: ["su.cpp"],
-
-    install_in_xbin: true,
-
+    static_libs: [
+        "bst_su_hcall",
+        "bst_su_vmsg",
+        "bst_su_xpl",
+    ],
+    shared_libs: [
+        "libcrypto",
+        "libcutils",
+        "liblog",
+        "libssl",
+    ],
     header_libs: ["libcutils_headers"],
+    install_in_xbin: true,
 }
 
 // A16DBG:P2:MECH BST su report daemon (a13; cloud telemetry)
